@@ -152,8 +152,32 @@ public class Recommender
 
 	private int predictPair(HashSet<Integer> anItemset, Integer j) {
 		/* TODO: implement this method */
+		if (anItemset.size() < 1)
+			return 0 ;
 		
-		// Compute support, confidence, or lift. Based on their threshold, decide how to predict. Return 1 when metrics are satisfied by threshold, otherwise 0.
+		int evidence = 0 ;
+		for (Set<Integer> p : Sets.combinations(anItemset, 1)) {	
+			
+			Integer numBasketsForI = freqItemsetsWithSize1.get(p.iterator().next()) ;	
+			
+			if (numBasketsForI == null)
+				continue ;						
+			
+			TreeSet<Integer> assocRule = new TreeSet<Integer>(p) ;			
+			assocRule.add(j) ;			
+			FrequentItemsetSize2 item = new FrequentItemsetSize2(assocRule) ;	
+			Integer numBasketsForIUnionj = freqItemsetsWithSize2.get(item) ; 
+			if (numBasketsForIUnionj == null)
+				continue ;			
+			
+			double confidence = (double) numBasketsForIUnionj / numBasketsForI;	
+			
+			if (confidence >= confidence_threshold_rulesize_2) 
+				return 1;
+		}
+
+		
+		
 		return 0 ;
 	}
 
@@ -216,7 +240,7 @@ class FrequentItemsetSize2 implements Comparable
 
 	public FrequentItemsetSize2(Set<Integer> s) {
 		Integer [] elem = s.toArray(new Integer[2]) ;
-		// order item ids!
+		
 		if (elem[0] < elem[1]) {
 			this.first = elem[0] ;
 			this.second = elem[1] ;
@@ -240,20 +264,3 @@ class FrequentItemsetSize2 implements Comparable
 	}
 }
 
-@SuppressWarnings("rawtypes")
-class FrequentItemsetSize3 implements Comparable 
-{
-	int [] items ;
-
-	FrequentItemsetSize3(Set<Integer> s) {
-		/* TODO: implement this method */
-		
-		// values in s must be sorted and save into items array
-	}
-
-	@Override
-	public int compareTo(Object obj) {  // this method is used for sorting when using TreeMap
-		/* TODO: implement this method */
-		return 0 ;
-	}
-}
