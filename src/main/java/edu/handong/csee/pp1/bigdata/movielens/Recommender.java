@@ -264,3 +264,44 @@ class FrequentItemsetSize2 implements Comparable
 	}
 }
 
+@SuppressWarnings("rawtypes")
+class FrequentItemsetSize3 implements Comparable 
+{
+	int [] items = new int [3];
+	FrequentItemsetSize3(Set<Integer> s) {
+		Integer [] element = s.toArray(new Integer[3]) ;
+		int temp;
+		for(int i=0; i<3; i++) {
+			for(int j=0; j<(2-i); j++) {
+				if(element[j] > element[j+1]) {
+					temp = element[j];
+					element[j] = element[j+1];
+					element[j+1] = temp;
+				}
+			}
+		}			
+		this.items[0] = element[0];
+		this.items[1] = element[1];
+		this.items[2] = element[2];
+	}
+
+	@Override
+	public int compareTo(Object obj) {  
+		FrequentItemsetSize3 p = (FrequentItemsetSize3) obj ;
+		if (this.items[0] < p.items[0]) 
+			return -1 ;
+		if (this.items[0] > p.items[0])
+			return 1 ;
+		if (this.items[1] < p.items[1]) 
+			return -1 ;
+		if (this.items[1] > p.items[1])
+			return 1 ;
+		if (this.items[2] < p.items[2]) 
+			return -1 ;
+		if (this.items[2] > p.items[2])
+			return 1 ;		
+		return (this.items[0]-p.items[0]) ;
+		
+	}
+}
+
